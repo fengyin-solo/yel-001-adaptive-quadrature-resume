@@ -159,7 +159,7 @@ def test_corrupt_checkpoint_is_refused(tmp_path):
 
 
 def test_top_keys_are_exact(tmp_path):
-    """题面：「输入对象顶层键如下：」。"""
+    """题面：「程序读取 UTF-8 文本，内容必须是一个 JSON 对象。顶层键如下：」。"""
     payload = problem()
     payload["method"] = "simpson"
     result, _, output, _ = run(tmp_path, payload)
@@ -185,7 +185,7 @@ def test_boolean_budget_is_refused(tmp_path):
 
 
 def test_reversed_interval_is_refused(tmp_path):
-    """题面：「`interval` 是两个有限数组成的闭区间 `[a,b]`，必须 `a < b`。」"""
+    """题面：「积分区间由 `interval` 给出，是两个有限端点且左端必须小于右端。」"""
     payload = problem()
     payload["interval"] = [1.0, 0.0]
     result, _, output, _ = run(tmp_path, payload)
@@ -209,8 +209,28 @@ def test_tolerance_minimum_is_accepted(tmp_path):
     assert result.returncode == 0 and read(output)["status"] == "complete"
 
 
+def test_problem_identifier_bounds_are_inclusive(tmp_path):
+    """题面：「`problem_id` 记录本次积分批次，可见字符数限定在 2 至 48；前后空格和控制字符均不接受。」"""
+    payload = problem()
+    # case_id: PROBLEM-ID-ACCEPT
+    payload["problem_id"] = "A1"
+    shortest, _, shortest_output, _ = run(tmp_path, payload, stem="shortest")
+    payload["problem_id"] = "A" * 48
+    longest, _, longest_output, _ = run(tmp_path, payload, stem="longest")
+    # case_id: PROBLEM-ID-REJECT
+    payload["problem_id"] = "A"
+    too_short, _, missing_short_output, _ = run(tmp_path, payload, stem="too-short")
+    payload["problem_id"] = "A" * 49
+    too_long, _, missing_long_output, _ = run(tmp_path, payload, stem="too-long")
+    assert shortest.returncode == 0 and shortest_output.is_file()
+    assert longest.returncode == 0 and longest_output.is_file()
+    assert too_short.returncode == 1 and too_short.stderr == "运行拒收: BAD_INPUT\n"
+    assert too_long.returncode == 1 and too_long.stderr == "运行拒收: BAD_INPUT\n"
+    assert not missing_short_output.exists() and not missing_long_output.exists()
+
+
 def test_absent_parent_is_io_failure(tmp_path):
-    """题面：「两个目标之一无法落盘时」。"""
+    """题面：「如果结果文件或检查点无法创建、替换，退出码为 1，并在标准错误单独写出 `运行拒收: IO_FAILURE`。」"""
     source = write(tmp_path / "problem.json", problem())
     output = tmp_path / "absent" / "result.json"
     checkpoint = tmp_path / "state.json"

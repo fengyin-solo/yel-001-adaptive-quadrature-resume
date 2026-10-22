@@ -17,7 +17,12 @@
     "test_outputs.py::test_boolean_budget_is_refused": {
       "priority": "boundary",
       "rationale": "boolean budget is refused；这验证公开边界和拒收口径，失败会产生越界输入或错误放行。",
-      "weight": 0.067
+      "weight": 0.047
+    },
+    "test_outputs.py::test_problem_identifier_bounds_are_inclusive": {
+      "priority": "boundary",
+      "rationale": "problem identifier bounds are inclusive；这验证题目编号的合法端点与相邻越界，失败会误拒合法批次或放行非法编号。",
+      "weight": 0.02
     },
     "test_outputs.py::test_chunked_resume_matches_one_shot": {
       "priority": "core",
