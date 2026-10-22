@@ -1,0 +1,68 @@
+{
+  "gate_tests": [
+    "test_outputs.py::test_small_budget_pauses",
+    "test_outputs.py::test_paused_document_key_order",
+    "test_outputs.py::test_checkpoint_digest_binds_input",
+    "test_outputs.py::test_corrupt_checkpoint_is_refused",
+    "test_outputs.py::test_top_keys_are_exact",
+    "test_outputs.py::test_duplicate_key_is_refused"
+  ],
+  "schema_version": 1,
+  "tests": {
+    "test_outputs.py::test_absent_parent_is_io_failure": {
+      "priority": "recovery",
+      "rationale": "absent parent is io failure；这验证失败、重跑或恢复不变量，失败会造成旧数据和台账不一致。",
+      "weight": 0.089
+    },
+    "test_outputs.py::test_boolean_budget_is_refused": {
+      "priority": "boundary",
+      "rationale": "boolean budget is refused；这验证公开边界和拒收口径，失败会产生越界输入或错误放行。",
+      "weight": 0.067
+    },
+    "test_outputs.py::test_chunked_resume_matches_one_shot": {
+      "priority": "core",
+      "rationale": "chunked resume matches one shot；这是任务的主交付路径，失败意味着核心业务结果不可用。",
+      "weight": 0.2
+    },
+    "test_outputs.py::test_complete_document_key_order": {
+      "priority": "core",
+      "rationale": "complete document key order；这是任务的主交付路径，失败意味着核心业务结果不可用。",
+      "weight": 0.2
+    },
+    "test_outputs.py::test_completed_rerun_keeps_files": {
+      "priority": "supporting",
+      "rationale": "completed rerun keeps files；这补充验证外围业务约束，失败会降低交付完整性和可运维性。",
+      "weight": 0.037
+    },
+    "test_outputs.py::test_polynomial_integral_is_accurate": {
+      "priority": "core",
+      "rationale": "polynomial integral is accurate；这是任务的主交付路径，失败意味着核心业务结果不可用。",
+      "weight": 0.2
+    },
+    "test_outputs.py::test_reversed_interval_is_refused": {
+      "priority": "boundary",
+      "rationale": "reversed interval is refused；这验证公开边界和拒收口径，失败会产生越界输入或错误放行。",
+      "weight": 0.067
+    },
+    "test_outputs.py::test_success_is_quiet": {
+      "priority": "supporting",
+      "rationale": "success is quiet；这补充验证外围业务约束，失败会降低交付完整性和可运维性。",
+      "weight": 0.037
+    },
+    "test_outputs.py::test_tolerance_bounds_are_enforced": {
+      "priority": "supporting",
+      "rationale": "tolerance bounds are enforced；这补充验证外围业务约束，失败会降低交付完整性和可运维性。",
+      "weight": 0.037
+    },
+    "test_outputs.py::test_tolerance_minimum_is_accepted": {
+      "priority": "boundary",
+      "rationale": "tolerance minimum is accepted；这验证公开边界和拒收口径，失败会产生越界输入或错误放行。",
+      "weight": 0.066
+    }
+  },
+  "weight_policy": {
+    "basis": "business_priority",
+    "core_min_share": 0.5,
+    "version": 1
+  }
+}
